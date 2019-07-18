@@ -13,7 +13,7 @@ from pic_to_brick.exceptions import ArgumentError
 def main():
     app = flask.Flask(__name__)
 
-    # app.config["DEBUG"] = True
+    app.config["DEBUG"] = True
 
     @app.route('/api/v1/test', methods=['GET'])
     def test():
@@ -23,12 +23,12 @@ def main():
     def api_id():
         required_args = {
             'img_url': str,
-            'height': int,
-            'width': int
+            'width': int,
+            'height': int
         }
 
         try:
-            args = check_args(required_args, request.args)
+            args = check_args(required_args, dict(request.args))
         except ArgumentError as err:
             return err
 
@@ -37,8 +37,8 @@ def main():
         return jsonify(
             {
                 'input_img_url': args['img_url'],
-                'height': args['height'],
                 'width': args['width'],
+                'height': args['height'],
                 'output_img_url': out_img_url
             }
         )
@@ -53,9 +53,9 @@ def main():
 def check_args(required_args, request_args) -> Dict:
     args = {}
 
-    for arg in required_args.keys():
+    for arg, fun in required_args.items():
         try:
-            args[arg] = required_args[arg]
+            args[arg] = fun(request_args[arg])
         except KeyError:
             raise ArgumentError(arg)
 
