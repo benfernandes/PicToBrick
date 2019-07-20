@@ -1,4 +1,4 @@
-from typing import Dict, List
+from typing import Dict, List, Set, cast
 
 import flask
 from flask import request, jsonify
@@ -6,15 +6,20 @@ from flask import request, jsonify
 # Example image
 # https://upload.wikimedia.org/wikipedia/commons/thumb/e/e5/NASA_logo.svg/320px-NASA_logo.svg.png?1563390243451
 # https://bit.ly/32rGl1v
+
 from pic_to_brick.brick import Brick, Colour, Shape2D
 from pic_to_brick.converter import Converter
+from pic_to_brick.database.db_connection import DbSessionFactory
+from pic_to_brick.database.query_runner import QueryRunner, AllBricksQuery
 from pic_to_brick.exceptions import ArgumentError
 
 
 class Main:
     def __init__(self):
-        bricks = self._get_all_bricks()
-        self.converter = Converter(bricks)
+        db_session_factory = DbSessionFactory('')
+        query_runner = QueryRunner(db_session_factory)
+        all_bricks = cast(Set[Brick], query_runner.run_query(AllBricksQuery()))
+        self.converter = Converter(all_bricks)
 
     def run(self):
 

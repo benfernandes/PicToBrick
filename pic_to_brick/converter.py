@@ -57,7 +57,7 @@ class Converter:
         close_colours: List[Tuple[float, Colour]] = []
 
         for colour in avail_colours:
-            close_colours.append((pixel_col.colour_diff(colour), colour))
+            close_colours.append((pixel_col.diff(colour), colour))
 
         close_colours.sort()
 

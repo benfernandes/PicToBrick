@@ -10,7 +10,7 @@ class Colour:
     green: int
     blue: int
 
-    def colour_diff(self, other) -> float:
+    def diff(self, other) -> float:
         return sqrt(
             pow(self.red - other.red, 2) +
             pow(self.green - other.green, 2) +
