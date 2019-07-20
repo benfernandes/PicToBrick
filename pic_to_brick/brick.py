@@ -1,13 +1,7 @@
-from typing import Set, Type, List, Tuple
+from math import sqrt
+from typing import Tuple
 
 import attr
-from math import sqrt
-
-bricks: Set[Type['Brick']] = set()
-
-
-def get_all_colours() -> List['Colour']:
-    return [brick.colour for brick in bricks]
 
 
 @attr.s(auto_attribs=True)
@@ -37,47 +31,3 @@ class Shape2D:
 class Brick:
     colour: Colour
     shape: Shape2D
-
-    def __init_subclass__(cls, **kwargs):
-        if cls not in bricks:
-            bricks.add(cls)
-
-
-class RedBrick(Brick):
-    colour = Colour(255, 0, 0)
-    shape = Shape2D(1, 1)
-
-
-class YellowBrick(Brick):
-    colour = Colour(255, 255, 0)
-    shape = Shape2D(1, 1)
-
-
-class GreenBrick(Brick):
-    colour = Colour(0, 255, 0)
-    shape = Shape2D(1, 1)
-
-
-class TealBrick(Brick):
-    colour = Colour(0, 255, 255)
-    shape = Shape2D(1, 1)
-
-
-class BlueBrick(Brick):
-    colour = Colour(0, 0, 255)
-    shape = Shape2D(1, 1)
-
-
-class PinkBrick(Brick):
-    colour = Colour(255, 0, 255)
-    shape = Shape2D(1, 1)
-
-
-class BlackBrick(Brick):
-    colour = Colour(0, 0, 0)
-    shape = Shape2D(1, 1)
-
-
-class WhiteBrick(Brick):
-    colour = Colour(255, 255, 255)
-    shape = Shape2D(1, 1)

@@ -1,5 +1,5 @@
-from pic_to_brick.main import main
+from pic_to_brick.main import Main
 
 
 def cli():
-    main()
+    Main().run()
