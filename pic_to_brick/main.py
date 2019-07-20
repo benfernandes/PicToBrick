@@ -1,42 +1,44 @@
-from typing import Dict, List
+from typing import Any, Dict, List, Set, cast
 
 import flask
-from flask import request, jsonify
+from flask import jsonify, request
+
+from pic_to_brick.brick import Brick, Colour, Shape2D
+from pic_to_brick.converter import Converter
+from pic_to_brick.database.db_connection import DbSessionFactory
+from pic_to_brick.database.queries import AllBricksQuery
+from pic_to_brick.database.query_runner import QueryRunner
+from pic_to_brick.exceptions import ArgumentError
 
 # Example image
 # https://upload.wikimedia.org/wikipedia/commons/thumb/e/e5/NASA_logo.svg/320px-NASA_logo.svg.png?1563390243451
 # https://bit.ly/32rGl1v
-from pic_to_brick.brick import Brick, Colour, Shape2D
-from pic_to_brick.converter import Converter
-from pic_to_brick.exceptions import ArgumentError
 
 
 class Main:
-    def __init__(self):
-        bricks = self._get_all_bricks()
-        self.converter = Converter(bricks)
+    def __init__(self, db_con_str: str):
+        db_session_factory = DbSessionFactory(db_con_str)
+        query_runner = QueryRunner(db_session_factory)
+        all_bricks = cast(Set[Brick], query_runner.run_query(AllBricksQuery()))
+        self.converter = Converter(all_bricks)
 
-    def run(self):
-
+    def run(self) -> None:
         app = flask.Flask(__name__)
         app.config["DEBUG"] = True
 
         @app.route('/api/v1/test', methods=['GET'])
-        def test():
+        def test() -> Any:
             return f'{app.config["DEBUG"]}'
 
         @app.route('/api/v1/convert', methods=['GET'])
-        def api_id():
+        def api_id() -> Any:
             required_args = {
                 'img_url': str,
                 'width': int,
                 'height': int
             }
 
-            try:
-                args = self._check_args(required_args, dict(request.args))
-            except ArgumentError as err:
-                return err
+            args = self._check_args(required_args, dict(request.args))
 
             out_img_url = self.converter.convert(args['img_url'], args['width'], args['height'])
 
@@ -70,7 +72,7 @@ class Main:
         ]
 
     @staticmethod
-    def _check_args(required_args, request_args) -> Dict:
+    def _check_args(required_args: Dict, request_args: Dict) -> Dict:
         args = {}
 
         for arg, fun in required_args.items():

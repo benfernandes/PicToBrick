@@ -22,7 +22,9 @@ setup(
     install_requires=[
         'attrs',
         'flask',
-        'Pillow'
+        'Pillow',
+        'SQLAlchemy',
+        'sqlalchemy-utils>=0.34'
     ],
     setup_requires=['pytest-runner'],
     tests_require=['pytest'],
